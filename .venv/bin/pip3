@@ -1,4 +1,4 @@
-#!/Users/tony/Documents/soon/.venv/bin/python
+#!/Users/tonyfant/Documents/GitHub/soon-movie-picker/.venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
