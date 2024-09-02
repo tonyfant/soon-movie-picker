@@ -15,7 +15,7 @@ class User():
             self.genres_score[genre] = 0
     
         
-    def update_genres_preference(self,genres_liked: list,genres_disliked:list,like: bool):
+    def update_preferences(self,genres_liked: list,genres_disliked:list,like: bool):
         if like:
             for genre in genres_liked:
                 self.genres_score[genre]+=1
@@ -23,6 +23,9 @@ class User():
             for genre in genres_disliked:
                 self.genres_score[genre]-=1
                 
+    def print_preferences(self):
+        for genre in self.genres_score.keys():
+            print(f"Genre: {genre}, score: {self.genres_score[genre]}")
                 
 # test_user= User('ericucca',['netflix'])
 
