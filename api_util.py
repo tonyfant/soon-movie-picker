@@ -1,5 +1,5 @@
 import requests
-
+import random
 
 api_key = '27d711165befe0f09626632f49285e2d'
 
@@ -12,6 +12,15 @@ def get_movie_by_id(id): ##completata
     else:
         print(f"Failed to fetch data: {response.status_code}")
 
+
+def get_movie_casually():
+    movie = None
+    while not movie:
+        url = f'https://api.themoviedb.org/3/movie/{random.randint(0,100000)}?api_key={api_key}'
+        response = requests.get(url)
+        if response.status_code == 200:
+            movie = response.json()
+    return movie
 
 
 def get_genres(): ##completata
@@ -49,22 +58,6 @@ def get_providers():
     return providers_dict
 
 
-def get_movie_providers_by_nationality(movie_id,nationality):
-    """
-    Questa funzione prende un ID di un film e restituisce i provider
-    di streaming dove il film è disponibile.
-    """
-    url = f'https://api.themoviedb.org/3/movie/{movie_id}/watch/providers?api_key={api_key}'
-    response = requests.get(url)
-    providers = response.json().get('results', {})
-    if providers[nationality]['flatrate']:
-        return providers[nationality]['flatrate']
-    else:
-        print('Movie not available by subscriptions')
-        return []
-    
-
-
 def get_popular_movies():
     url = f'https://api.themoviedb.org/3/movie/popular?api_key={api_key}'
     try:
@@ -77,28 +70,43 @@ def get_popular_movies():
 
 
 
-def recommend_movie(user,movies_visited):
-    popular_movies = get_popular_movies()
-    
-    if not popular_movies:
-        print("No popular movies found.")
-        return None
-    
-    best_score = float('-inf')
-    best_movie = None
-    
-    for movie in popular_movies:
-        if movie['id'] in movies_visited:
-            continue
-        movie_genres = [genre for genre in movie['genre_ids']]
-        score = sum(user.genres_score.get(genre, 0) for genre in movie_genres)
-        
-        if score > best_score:
-            best_score = score
-            best_movie = movie
+
+
+
+def recommend_movie(user):
     from movie import Movie
-    if best_movie:
-        return Movie(best_movie['id'])
+    subscription_len = len(user.subscriptions)
+    subscription_url = ''
+    for i in range(subscription_len):
+        subscription_url += f'{user.subscriptions[i]}%7C'
+    if sum(user.genres_score.values())!=0:
+        url = f"https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&page={random.randint(0,3)}&sort_by=popularity.desc&watch_region=IT&with_genres={user.get_preferred_genres()[0][0]}%7C{user.get_preferred_genres()[1][0]}%7C{user.get_preferred_genres()[2][0]}&with_watch_providers={subscription_url}"
+
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyN2Q3MTExNjViZWZlMGYwOTYyNjYzMmY0OTI4NWUyZCIsIm5iZiI6MTcyNTQ4MzA5NC40ODk5NjksInN1YiI6IjY2YzlmZmUyYjRhOWE5ZTVmNDk0YWFhMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.tOq-sJa_2ogrks5_USvMBXBUaaGZo2RT-PUR45r9VqE"
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code!=200:
+            movies = get_popular_movies()
+            return Movie(movies[random.randint(0,19)]['id'])
+        else:
+            data = response.json()
+            movie = Movie(data['results'][random.randint(0,len(data['results'])-1)]['id'])
+            return movie
     else:
-        print("No suitable movie found.")
-        return None
+        movies = get_popular_movies()
+        return Movie(movies[random.randint(0,19)]['id'])
+
+
+
+def get_movie_poster_url(movie_id):
+    movie_data = get_movie_by_id(movie_id)
+    if movie_data and 'poster_path' in movie_data:
+        poster_path = movie_data['poster_path']
+        base_url = 'https://image.tmdb.org/t/p/original'
+        return f'{base_url}{poster_path}'
+    else:
+        print(f"Failed to fetch poster for movie ID {movie_id}")
+        return None  

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Movie</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+            font-size: 24px;
+            padding: 15px;
+        }
+        .btn {
+            border-radius: 50px;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .card-body p {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        Your Recommended Movie
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <img src="{{ movie.picture_url }}" alt="{{ movie.title }}" class="img-fluid">
+                        <p>Title: {{ movie.title }}</p>
+                        <p>Release Date: {{ movie.year }}</p>
+                        <p>Description: {{ movie.overview }}</p>
+                        <p>Genres: {{ movie.print_genres() }}</p>
+                        
+                        <div class="d-flex justify-content-between">
+                            <form action="{{ url_for('dislike_movie', username=username, movie_id=movie.id) }}" method="GET">
+                                <button type="submit" class="btn btn-danger">Dislike</button>
+                            </form>
+                            <form action="{{ url_for('like_movie', username=username, movie_id=movie.id) }}" method="GET">
+                                <button type="submit" class="btn btn-primary">Like</button>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
