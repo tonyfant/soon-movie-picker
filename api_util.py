@@ -1,5 +1,5 @@
 import requests
-import random
+import randomimport random
 
 api_key = '27d711165befe0f09626632f49285e2d'
 
@@ -56,6 +56,22 @@ def get_providers():
     for provider in providers['results']:
         providers_dict[provider['provider_id']] = provider['provider_name']
     return providers_dict
+
+
+def get_movie_providers_by_nationality(movie_id,nationality):
+    """
+    Questa funzione prende un ID di un film e restituisce i provider
+    di streaming dove il film è disponibile.
+    """
+    url = f'https://api.themoviedb.org/3/movie/{movie_id}/watch/providers?api_key={api_key}'
+    response = requests.get(url)
+    providers = response.json().get('results', {})
+    if providers[nationality]['flatrate']:
+        return providers[nationality]['flatrate']
+    else:
+        print('Movie not available by subscriptions')
+        return []
+    
 
 
 def get_popular_movies():
