@@ -1,7 +1,7 @@
 import requests
 import random
 
-api_key = '27d711165befe0f09626632f49285e2d'
+api_key = 'insert here your API key from TMDB'
 
 
 def get_movie_by_id(id): ##completata
